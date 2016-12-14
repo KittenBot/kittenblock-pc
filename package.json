@@ -2,10 +2,22 @@
   "name": "kittenblock-pc",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "test.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+"window": {
+    "title": "Kitten-Blocks",
+    "show": true,
+    "toolbar": true,
+    "frame": true,
+    "position": "center",
+    "fullscreen": false,
+    "width": 1400,
+    "height": 900,
+    "min_width": 200,
+    "min_height": 200
+},
   "repository": {
     "type": "git",
     "url": "https://git.oschina.net/riven/kittenblock-pc.git"
