@@ -1,0 +1,15 @@
+{
+  "name": "kittenblock-pc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.oschina.net/riven/kittenblock-pc.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
