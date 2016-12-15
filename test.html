@@ -7,10 +7,36 @@
 <body>
 
 </body>
-<script src="./index.js"></script>
+<!--script src="index.js"></script-->
+<!--script src="test/jquery.min.js"></script-->
+<!--script>
+    var kb;
+    window.onload = function () {
+        kb = new Kittenblock();
+        console.log(kb);
+        kb.updater.getServer(function(res){
+            console.log(res);
+        })
+    };
+</script-->
+<script src="src/ArduinoManager.js"></script>
 <script>
-    var kb = new Kittenblock();
-    console.log(kb);
+    var ar = new ArduinoInterface();
+    ar.arduinopath = "D://arduino//";
+    ar.checkArduinoPath(function (ret) {
+        console.log("check arduino path ret "+ret);
+    });
+    /*
+    ar.copyLibrary("./src",function (ret) {
+        console.log("cp lib ret "+ret);
+    });
+    */
+    /*
+    code = "hello world";
+    path = process.cwd()+"/test/test.ino";
+    ar.openArduinoIde(code,path)
+    */
+
 
 
 </script>

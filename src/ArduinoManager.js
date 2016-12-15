@@ -73,8 +73,8 @@ ArduinoInterface.prototype.copyLibrary = function(src,callback){
     });
 };
 
-ArduinoInterface.prototype.loadFactoryFirmware = function(){
-    var code = fs.readFileSync("./arduino/kb_firmware/kb_firmware.ino", 'utf8');
+ArduinoInterface.prototype.loadFactoryFirmware = function(inofilepath){
+    var code = fs.readFileSync(inofilepath, 'utf8');
     this.editor.setValue(code,-1);
 };
 
@@ -84,6 +84,7 @@ ArduinoInterface.prototype.openArduinoIde = function(code,path){
     fs.writeFile(path, code, function(err) {
         if(err) {
             console.log("Save error "+err);
+            throw err;
         }else{
             var cmd = "arduino.exe "+path;
             if(process.platform=="darwin"){
@@ -93,26 +94,23 @@ ArduinoInterface.prototype.openArduinoIde = function(code,path){
                 encoding: 'utf8',
                 cwd: arduinoPath
             });
-            console.log("openArduinoIde "+spawn);
         }
     });
 };
 
 ArduinoInterface.prototype.parseLine = function(msg){
     var ret = null;
-    appendLog(msg, "LightSkyBlue");
+    this.appendLog(msg, "LightSkyBlue");
     if (msg.indexOf("M3") > -1) {
         var tmp = msg.trim().split(" ");
         var pin = tmp[1];
         var val = tmp[2];
-        //window.vm.postIOData('serial', {slot: "M3 "+pin, report: val});
-        KBlock.arduino.digitalQuery[pin] = val;
+        this.digitalQuery[pin] = val;
     }else if (msg.indexOf("M5") > -1) {
         var tmp = msg.trim().split(" ");
         var pin = tmp[1];
         var val = tmp[2];
-        //window.vm.postIOData('serial', {slot: "M5 "+pin, report: val});
-        KBlock.arduino.analogQuery[pin] = val;
+        this.analogQuery[pin] = val;
     }else if(msg.indexOf("M101") > -1 ){
         window.vm.postIOData('serial', {slot: "M101", report: null});
     }else if(msg.indexOf("M8") > -1){
@@ -131,19 +129,19 @@ ArduinoInterface.prototype.parseLine = function(msg){
 
 ArduinoInterface.prototype.queryData = function(data){
     if(data.type == 'D'){
-        if(KBlock.arduino.digitalQuery[data.pin]){
-            return KBlock.arduino.digitalQuery[data.pin];
+        if(this.digitalQuery[data.pin]){
+            return this.digitalQuery[data.pin];
         }else{
             var cmd = "M13 "+data.pin+" 1";
-            KBlock.arduino.sendCmd(cmd);
+            this.sendCmd(cmd);
             return 0;
         }
     }else if(data.type == 'A'){
-        if(KBlock.arduino.analogQuery[data.pin]){
-            return KBlock.arduino.analogQuery[data.pin];
+        if(this.analogQuery[data.pin]){
+            return this.analogQuery[data.pin];
         }else{
             var cmd = "M15 "+data.pin+" 1";
-            KBlock.arduino.sendCmd(cmd);
+            this.sendCmd(cmd);
             return 0;
         }
     }
@@ -157,6 +155,7 @@ ArduinoInterface.prototype.stopAll = function(){
     this.sendCmdEvent.dispatch(msg);
 };
 
+/*
 ArduinoInterface.prototype.appendLog = function(msg, color){
     var psconsole = $('#console-log');
     msg = String(msg); // change to string in case of object
@@ -166,12 +165,13 @@ ArduinoInterface.prototype.appendLog = function(msg, color){
     psconsole.append('<span style="color:' + color + '">' + msg + '</span><br/>');
     psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height())
 };
+*/
 
 ArduinoInterface.prototype.sendCmd = function(msg){
     this.sendCmdEvent.dispatch(msg);
 };
 
-function buildUploadCommand(inofile,cmdType){
+function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,lastSerialPort){
     if(!cmdType){
         cmdType = "upload";
     }
@@ -183,22 +183,27 @@ function buildUploadCommand(inofile,cmdType){
     //var verbose = config.debug==true?"-v":"";
 
     var verbose = "-v"; // always use verbose to get compile feedback
-    var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board arduino:avr:"+KBlock.arduino.arduinoboard+" --port "+KBlock.arduino.lastSerialPort+" "+process.cwd()+inofile;
+    var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board arduino:avr:"+arduinoboard+" --port "+lastSerialPort+" "+process.cwd()+inofile;
     return cmd;
 }
 
 ArduinoInterface.prototype.compileCode = function(path,callback,errCallback){
     var errorcode = null;
+    var arduinopath = this.arduinopath;
     this.checkArduinoPath();
 
-    var cmd = buildUploadCommand(path,"verify"); // temporary project folder
+    var cmd = buildUploadCommand(path,"verify",this.arduinoboard,this.arduinopath,this.lastSerialPort);
     console.log(cmd);
 
     var spawn = cp.exec(cmd,{
         encoding: 'utf8',
-        cwd: KBlock.arduino.arduinopath
+        cwd: arduinopath
     });
-    appendLog(">>"+cmd,'blue');
+    this.appendLog(">>"+cmd,'blue');
+
+    function setHexpath(hexpath) {
+        this.hexpath = hexpath;
+    }
 
     spawn.stdout.on('data', function (data) {
         if(data.indexOf("error")>-1){
@@ -206,7 +211,8 @@ ArduinoInterface.prototype.compileCode = function(path,callback,errCallback){
             errorcode = data;
         }else if(data.indexOf("cpp.hex")>-1){
             //appendLog(data,'cyan');
-            this.hexpath = data.toString().trim().split(" ").pop().replace(/\\/g,"/");
+            var hexpath = data.toString().trim().split(" ").pop().replace(/\\/g,"/");
+            setHexpath(hexpath);
         }else{
             appendLog(data,'grey');
         }
@@ -280,8 +286,8 @@ ArduinoInterface.prototype.uploadProject = function(){
 };
 
 ArduinoInterface.prototype.tick = function(){
-    if(KBlock.arduino.autotranslate){
-        KBlock.arduino.sb2cpp();
+    if(this.autotranslate){
+        this.sb2cpp();
     }
 };
 

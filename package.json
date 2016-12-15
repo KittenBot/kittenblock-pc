@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-"window": {
+  "window": {
     "title": "Kitten-Blocks",
     "show": true,
     "toolbar": true,
@@ -17,11 +17,14 @@
     "height": 900,
     "min_width": 200,
     "min_height": 200
-},
+  },
   "repository": {
     "type": "git",
     "url": "https://git.oschina.net/riven/kittenblock-pc.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "adm-zip": "^0.4.7"
+  }
 }
