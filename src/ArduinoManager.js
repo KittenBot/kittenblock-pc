@@ -5,6 +5,7 @@
 /**
  * Created by Riven on 10/7/16.
  */
+"use strict";
 
 var fs = require('fs');
 var cp = require('child_process');

@@ -30,15 +30,5 @@ PluginManager.prototype.loadPlugins = function(pluginjs){
     this.enabledPlugin = new plugin();
 };
 
-PluginManager.prototype.appendBoardToUI = function(){
-    var p = KBlock.plugin.enabledPlugin;
-    $("#boardlist").append('<li class="divider"></li>');
-    KBlock.plugin[p].board.forEach(function(b){
-        $("#boardlist").append("<li><a href='#' type='"+b.type+"'>" + b.name + "</a></li>");
-    });
-
-};
-
-
 
 

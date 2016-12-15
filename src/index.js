@@ -1,6 +1,8 @@
 /**
  * Created by Riven on 2016/12/15.
  */
+"use strict";
+
 var EventEmitter = require('events');
 var SerialConnection = require('./SerialConnection');
 var UpdateManager = require('./UpdaterManager');

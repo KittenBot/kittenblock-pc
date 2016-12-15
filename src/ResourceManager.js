@@ -3,9 +3,9 @@
  */
 
 
-fs = require('fs');
-http = require('http');
-url = require('url');
+var fs = require('fs');
+var http = require('http');
+var url = require('url');
 var crypt = require('crypto');
 
 var ResourceServer = function(){
