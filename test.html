@@ -7,9 +7,9 @@
 <body>
 
 </body>
-<!--script src="index.js"></script-->
+<script src="index.js"></script>
 <!--script src="test/jquery.min.js"></script-->
-<!--script>
+<script>
     var kb;
     window.onload = function () {
         kb = new Kittenblock();
@@ -17,10 +17,13 @@
         kb.updater.getServer(function(res){
             console.log(res);
         })
+        kb.serial.enumSerial(function (devices) {
+            console.log(devices);
+        })
     };
-</script-->
-<script src="src/ArduinoManager.js"></script>
-<script>
+</script>
+<!--script src="src/ArduinoManager.js"></script-->
+<!--script>
     var ar = new ArduinoInterface();
     ar.arduinopath = "D://arduino//";
     ar.checkArduinoPath(function (ret) {
@@ -39,5 +42,5 @@
 
 
 
-</script>
+</script-->
 </html>

@@ -8,9 +8,9 @@
 
 var fs = require('fs');
 var cp = require('child_process');
-var ncp = require('./src/ncp').ncp;
+var ncp = require('./ncp').ncp;
 
-var ArduinoInterface = function(){
+var ArduinoManager = function(){
     this.autotranslate = false;
     this.sendCmdEvent = new chrome.Event();
     this.baudrate = 115200;
@@ -19,7 +19,7 @@ var ArduinoInterface = function(){
     this.arduinoboard = "uno";
     this.boardlist = [{"name":"Arduino UNO","type":"uno"},
         {"name":"Arduino NANO","type":"nano:cpu=atmega328"}];
-    this.selectedBoard ="Arduino UNO" ;
+    this.selectedBoard ="Arduino UNO";
     this.lastSerialPort = "COM6";
     this.autotranslate = false;
     this.digitalQuery = {};
@@ -28,9 +28,7 @@ var ArduinoInterface = function(){
     this.notify = null;
 };
 
-//module.export = ArduinoInterface;
-
-ArduinoInterface.prototype.checkArduinoPath = function(callback){
+ArduinoManager.prototype.checkArduinoPath = function(callback){
     fs.access(this.arduinopath, fs.F_OK, function(err) {
         if (err) {
             if(callback){
@@ -43,7 +41,7 @@ ArduinoInterface.prototype.checkArduinoPath = function(callback){
     });
 };
 
-ArduinoInterface.prototype.sb2cpp = function(){
+ArduinoManager.prototype.sb2cpp = function(){
     try {
         var code = "";
         code += Blockly.Arduino.workspaceToCode(workspace);
@@ -59,7 +57,7 @@ ArduinoInterface.prototype.sb2cpp = function(){
     }
 };
 
-ArduinoInterface.prototype.copyLibrary = function(src,callback){
+ArduinoManager.prototype.copyLibrary = function(src,callback){
     var dst = this.arduinopath+"/libraries";
     if(process.platform=="darwin"){
         dst = this.arduinopath+"/Arduino.app/Contents/Java/libraries";
@@ -73,12 +71,12 @@ ArduinoInterface.prototype.copyLibrary = function(src,callback){
     });
 };
 
-ArduinoInterface.prototype.loadFactoryFirmware = function(inofilepath){
+ArduinoManager.prototype.loadFactoryFirmware = function(inofilepath){
     var code = fs.readFileSync(inofilepath, 'utf8');
     this.editor.setValue(code,-1);
 };
 
-ArduinoInterface.prototype.openArduinoIde = function(code,path){
+ArduinoManager.prototype.openArduinoIde = function(code,path){
     this.checkArduinoPath();
     var arduinoPath = this.arduinopath;
     fs.writeFile(path, code, function(err) {
@@ -98,7 +96,7 @@ ArduinoInterface.prototype.openArduinoIde = function(code,path){
     });
 };
 
-ArduinoInterface.prototype.parseLine = function(msg){
+ArduinoManager.prototype.parseLine = function(msg){
     var ret = null;
     this.appendLog(msg, "LightSkyBlue");
     if (msg.indexOf("M3") > -1) {
@@ -127,7 +125,7 @@ ArduinoInterface.prototype.parseLine = function(msg){
     }
 };
 
-ArduinoInterface.prototype.queryData = function(data){
+ArduinoManager.prototype.queryData = function(data){
     if(data.type == 'D'){
         if(this.digitalQuery[data.pin]){
             return this.digitalQuery[data.pin];
@@ -148,7 +146,7 @@ ArduinoInterface.prototype.queryData = function(data){
 
 };
 
-ArduinoInterface.prototype.stopAll = function(){
+ArduinoManager.prototype.stopAll = function(){
     this.digitalQuery = {};
     this.analogQuery = {};
     var msg = "M999\n"; // reset arduino board
@@ -167,7 +165,7 @@ ArduinoInterface.prototype.appendLog = function(msg, color){
 };
 */
 
-ArduinoInterface.prototype.sendCmd = function(msg){
+ArduinoManager.prototype.sendCmd = function(msg){
     this.sendCmdEvent.dispatch(msg);
 };
 
@@ -187,7 +185,7 @@ function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,lastSerialP
     return cmd;
 }
 
-ArduinoInterface.prototype.compileCode = function(path,callback,errCallback){
+ArduinoManager.prototype.compileCode = function(path,callback,errCallback){
     var errorcode = null;
     var arduinopath = this.arduinopath;
     this.checkArduinoPath();
@@ -214,7 +212,7 @@ ArduinoInterface.prototype.compileCode = function(path,callback,errCallback){
             var hexpath = data.toString().trim().split(" ").pop().replace(/\\/g,"/");
             setHexpath(hexpath);
         }else{
-            appendLog(data,'grey');
+            this.appendLog(data,'grey');
         }
     });
 
@@ -230,7 +228,7 @@ ArduinoInterface.prototype.compileCode = function(path,callback,errCallback){
 
 };
 
-ArduinoInterface.prototype.uploadCode = function(path){
+ArduinoManager.prototype.uploadCode = function(path){
     KBlock.arduino.checkArduinoPath();
     if(KBlock.serial.connectionId!=-1){
         KBlock.serial.disconnect();
@@ -266,7 +264,7 @@ ArduinoInterface.prototype.uploadCode = function(path){
     });
 };
 
-ArduinoInterface.prototype.uploadProject = function(){
+ArduinoManager.prototype.uploadProject = function(){
     var code = this.editor.getValue();
     var path = process.cwd()+"/arduino/project/project.ino";
     fs.writeFile(path, code, function(err) {
@@ -285,7 +283,7 @@ ArduinoInterface.prototype.uploadProject = function(){
     });
 };
 
-ArduinoInterface.prototype.tick = function(){
+ArduinoManager.prototype.tick = function(){
     if(this.autotranslate){
         this.sb2cpp();
     }
@@ -293,3 +291,4 @@ ArduinoInterface.prototype.tick = function(){
 
 
 
+module.exports = ArduinoManager;
