@@ -2,49 +2,32 @@
  * Created by Riven on 2016/12/15.
  */
 
+var util = require("./Utils");
 
 var PluginManager = function(){
     this.pluginlist = [];
+    this.pluginpath;
     this.enabledPlugin = null;
 };
 
 module.exports = PluginManager;
 
-PluginManager.prototype.enumPlugins = function(){
-    var pluginpath = "./plugin/";
+PluginManager.prototype.enumPlugins = function(pluginpath){
+    this.pluginpath = pluginpath;
     var plugin = fs.readdirSync(pluginpath);
     console.log("plugin: " + plugin);
+    this.pluginlist = [];
     plugin.forEach(function (p) {
         if(fs.lstatSync(pluginpath+p).isDirectory()) {
-            KBlock.plugin.pluginlist.push(p);
-            if (KBlock.plugin.enabledPlugin == p) {
-                $("#plugins").append('<label><input class="plugin_checkbox" type="checkbox" plugin="' + p + '" checked>' + p + '</label>');
-            } else {
-                $("#plugins").append('<label><input class="plugin_checkbox" type="checkbox" plugin="' + p + '">' + p + '</label>');
-            }
+            this.pluginlist.push(p);
         }
     });
-
-    $('input.plugin_checkbox').on('change', function() {
-        $('input.plugin_checkbox').not(this).prop('checked', false);
-        KBlock.plugin.enabledPlugin = $(this).attr("plugin");
-        //KBlock.plugin.loadPlugins($(this).attr("plugin"));
-        // todo: add toolbox reload schema
-    });
-
+    return this.pluginlist;
 };
 
-PluginManager.prototype.loadPlugins = function(pluginname){
-    var pluginpath = "../plugin/" + pluginname +"/"+pluginname+".js";
-    loadJsFile(pluginpath, function () {
-        console.log("plugin " + pluginpath);
-        eval("KBlock.plugin." + pluginname + "=" + pluginname);
-        KBlock.Toolbox = KBlock.Toolbox.replace("</xml>", KBlock.plugin[pluginname].toolbox + "</xml>");
-        KBlock.plugin.enabledPlugin = pluginname;
-        var event = new CustomEvent('kbload', {"loaded": KBlock.plugin});
-        window.dispatchEvent(event);
-    });
-
+PluginManager.prototype.loadPlugins = function(pluginjs){
+    var plugin = require(pluginjs);
+    this.enabledPlugin = new plugin();
 };
 
 PluginManager.prototype.appendBoardToUI = function(){
