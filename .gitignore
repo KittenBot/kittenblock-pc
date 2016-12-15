@@ -1,0 +1,17 @@
+# Mac OS
+.DS_Store
+/.idea
+
+# NPM
+/node_modules
+npm-*
+
+/nwjs
+
+# Testing
+/.nyc_output
+/coverage
+
+# Build
+/build
+/.opt-in
