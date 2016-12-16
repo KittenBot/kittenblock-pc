@@ -67,18 +67,30 @@ module.exports =
 	    instance.resourcemng = new ResourceManager();
 	    instance.configmng = new ConfigManager();
 
+	    this.connectedPort = null;
 	    this.portList = [];
 	    this.config = this.configmng.load();
 	};
 
 	KittenBlock.prototype.connectPort = function (port, successCb, readlineCb, closeCb) {
+	    var _this = this;
 	    if (port.type == 'serial') {
 	        var ser = this.serial;
 	        ser.connect(port.path, { bitrate: this.config.baudrate }, function () {
 	            ser.onReadLine.addListener(readlineCb);
-	            ser.onDisconnect.addListener(closeCb);
+	            ser.onDisconnect.addListener(function () {
+	                _this.connectedPort = null;
+	                closeCb();
+	            });
+	            _this.connectedPort = { "path": port.path, "type": "serial" };
 	            successCb(port.path);
 	        });
+	    }
+	};
+
+	KittenBlock.prototype.sendCmd = function (data) {
+	    if (this.connectedPort && this.connectedPort.type == 'serial') {
+	        this.serial.send(data + '\r\n');
 	    }
 	};
 
@@ -92,6 +104,10 @@ module.exports =
 	        });
 	        if (callback) callback(kb.portList);
 	    });
+	};
+
+	KittenBlock.prototype.getUpdate = function (callback) {
+	    this.updater.getServer(callback);
 	};
 
 	module.exports = KittenBlock;
