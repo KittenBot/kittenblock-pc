@@ -66,7 +66,7 @@ SerialConnection.prototype.onReceiveError = function(errorInfo) {
 SerialConnection.prototype.onConnect = function(callback,connectionInfo){
     if (!connectionInfo) {
         console.log("Connection failed.");
-        wzNotify("Can't open serial port");
+        if (callback) callback(-1);
         return;
     }
     this.connectionId = connectionInfo.connectionId;

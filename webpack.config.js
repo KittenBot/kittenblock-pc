@@ -41,12 +41,13 @@ module.exports = [
         entry: {
             'kittenblock': './src/index.js'
         },
-        target:"node",
+        target:"node-webkit",
         output: {
             library: 'KittenBlock',
             libraryTarget: 'commonjs2',
-            path: __dirname,
+            path: "./test/nwjs/",
             filename: '[name].js'
         }
-    })
+    }),
+
 ];

@@ -10,7 +10,6 @@ var crypt = require('crypto');
 
 var ResourceServer = function(){
     this._server = null;
-
 };
 
 module.exports = ResourceServer;
@@ -27,18 +26,18 @@ ResourceServer.prototype.getSpriteSkin = function(spriteId){
     return "";
 };
 
-ResourceServer.prototype.startServer = function(){
+ResourceServer.prototype.startServer = function(workspacePath){
     this._server = http.createServer(function (req, res) {
         var request = url.parse(req.url, true);
         var action = request.pathname;
         //console.log("server: " + action);
 
         if (action.indexOf("png") > -1 ) {
-            var img = fs.readFileSync("./workspace/" + action.substr(1)); // remove slash
+            var img = fs.readFileSync(workspacePath + action.substr(1)); // remove slash
             res.writeHead(200, {'Content-Type': 'image/png'});
             res.end(img, 'binary');
         }else if(action.indexOf("svg") > -1){
-            var img = fs.readFileSync("./workspace/" + action.substr(1)); // remove slash
+            var img = fs.readFileSync(workspacePath + action.substr(1)); // remove slash
             res.writeHead(200, {'Content-Type': 'image/svg+xml'});
             res.end(img, 'binary');
         } else {
