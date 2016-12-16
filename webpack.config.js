@@ -45,7 +45,7 @@ module.exports = [
         output: {
             library: 'KittenBlock',
             libraryTarget: 'commonjs2',
-            path: "./test/nwjs/",
+            path: "./", //test/nwjs/
             filename: '[name].js'
         }
     }),

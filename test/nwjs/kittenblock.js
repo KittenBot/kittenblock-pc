@@ -88,6 +88,13 @@ module.exports =
 	    }
 	};
 
+	KittenBlock.prototype.disConnectPort = function (callback) {
+	    if (this.connectedPort == null) return;
+	    if (this.connectedPort.type == 'serial') {
+	        this.serial.disconnect();
+	    }
+	};
+
 	KittenBlock.prototype.sendCmd = function (data) {
 	    if (this.connectedPort && this.connectedPort.type == 'serial') {
 	        this.serial.send(data + '\r\n');

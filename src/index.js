@@ -42,6 +42,13 @@ KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb)
     }
 };
 
+KittenBlock.prototype.disonnectPort = function (callback) {
+    if(this.connectedPort==null) return;
+    if(this.connectedPort.type=='serial'){
+        this.serial.disconnect(callback);
+    }
+};
+
 KittenBlock.prototype.sendCmd = function (data) {
     if(this.connectedPort && this.connectedPort.type=='serial'){
         this.serial.send(data+'\r\n');
