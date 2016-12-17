@@ -81,7 +81,7 @@ ProjectManager.prototype.loadsb2 = function(filepath){
 
     renameResourceToHash("./workspace/");
     // 3. load project
-    var projectJson = path.resolve(this.workspaceFolder,"/project.json");
+    var projectJson = path.resolve(this.workspaceFolder,"project.json");
     var s = fs.readFileSync(projectJson, 'utf8');
     window.vm.loadProject(s);
 
