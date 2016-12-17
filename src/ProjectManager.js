@@ -17,16 +17,6 @@ function renameByMd5(folder, filepath, ext){
     });
 }
 
-function renameResourceToHash(folder){
-    var tmplist = fs.readdirSync(folder);
-    tmplist.forEach(function (p) {
-        filepath = folder + p;
-        if(path.extname(filepath)==".png" || path.extname(filepath)==".svg") {
-            renameByMd5(folder, filepath, path.extname(filepath));
-        }
-    });
-}
-
 var deleteFolderRecursive = function(path) {
     if( fs.existsSync(path) ) {
         fs.readdirSync(path).forEach(function(file,index){
@@ -65,6 +55,16 @@ ProjectManager.prototype.parseExamples = function (exampleFolder) {
     return exampleList;
 };
 
+ProjectManager.prototype.renameResourceToHash = function(folder){
+    var tmplist = fs.readdirSync(folder);
+    tmplist.forEach(function (p) {
+        var filepath = path.resolve(folder,p);
+        if(path.extname(filepath)==".png" || path.extname(filepath)==".svg") {
+            renameByMd5(folder, filepath, path.extname(filepath));
+        }
+    });
+}
+
 /**
  * load sb2 format project file
  * @param filepath
@@ -79,7 +79,7 @@ ProjectManager.prototype.loadsb2 = function(filepath){
     zip.extractAllTo(this.workspaceFolder,true);
     // 2. rename resources
 
-    renameResourceToHash("./workspace/");
+    this.renameResourceToHash(this.workspaceFolder);
     // 3. load project
     var projectJson = path.resolve(this.workspaceFolder,"project.json");
     var s = fs.readFileSync(projectJson, 'utf8');

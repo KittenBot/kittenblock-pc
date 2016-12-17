@@ -18,6 +18,7 @@ var KittenBlock = function () {
     var instance = this;
     this.pluginpath = path.resolve(process.cwd(),'plugin');
     this.workpath = path.resolve(process.cwd(),'workspace');
+    this.defaultExamples = path.resolve(process.cwd(),'examples');
 
     instance.serial = new SerialConnection();
     instance.updater = new UpdateManager();
@@ -78,6 +79,11 @@ KittenBlock.prototype.enumPort = function (callback) {
 
 KittenBlock.prototype.getUpdate = function (callback) {
     this.updater.getServer(callback);
+};
+
+KittenBlock.prototype.loadDefaultProj = function () {
+    var projfile = path.resolve(this.defaultExamples,"kittenbot.sb2");
+    this.proj.loadsb2(projfile);
 };
 
 
