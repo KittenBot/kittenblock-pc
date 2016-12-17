@@ -4,9 +4,14 @@
 
 const PluginManager = require("../src/PluginManager");
 
-var plugin = new PluginManager();
-var path =  process.cwd()+'/mcookie.js';
-plugin.loadPlugins(path);
-console.log(plugin.enabledPlugin.name);
+var path = process.cwd()+"/plugins";
+var p = new PluginManager(path);
 
+p.enumPlugins();
+console.log(p.pluginlist)
+p.loadPlugins("kittenbot")
+console.log(p.enabledPlugin)
+console.log(p.enabledPlugin.getToolbox())
+console.log(p.enabledPlugin.getPrimitives())
+console.log(p.enabledPlugin.getBlocks())
 

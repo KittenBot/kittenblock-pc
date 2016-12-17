@@ -71,6 +71,9 @@ KittenBlock.prototype.getUpdate = function (callback) {
     this.updater.getServer(callback);
 };
 
+KittenBlock.prototype.initPlugin = function () {
+
+};
 
 
 module.exports = KittenBlock;
