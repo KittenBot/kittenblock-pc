@@ -2,7 +2,7 @@
  * Created by Riven on 2016/12/15.
  */
 "use strict";
-
+var path = require('path');
 var EventEmitter = require('events');
 var SerialConnection = require('./SerialConnection');
 var UpdateManager = require('./UpdaterManager');
@@ -10,15 +10,20 @@ var ArduinoManager = require('./ArduinoManager');
 var Toolbox = require('./Toolbox');
 var ResourceManager = require('./ResourceManager');
 var ConfigManager = require('./ConfigManager');
+var PluginManager = require('./PluginManager');
+
 
 var KittenBlock = function () {
     var instance = this;
+    this.workpath = path.resolve(process.cwd(),'/plugin');
+
     instance.serial = new SerialConnection();
     instance.updater = new UpdateManager();
     instance.arduino = new ArduinoManager();
     instance.toolbox = new Toolbox();
     instance.resourcemng = new ResourceManager();
     instance.configmng  = new ConfigManager();
+    instance.plugin = new PluginManager(this.workpath);
 
     this.connectedPort = null;
     this.portList = [];
@@ -71,9 +76,6 @@ KittenBlock.prototype.getUpdate = function (callback) {
     this.updater.getServer(callback);
 };
 
-KittenBlock.prototype.initPlugin = function () {
-
-};
 
 
 module.exports = KittenBlock;
