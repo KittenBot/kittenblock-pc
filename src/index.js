@@ -11,11 +11,13 @@ var Toolbox = require('./Toolbox');
 var ResourceManager = require('./ResourceManager');
 var ConfigManager = require('./ConfigManager');
 var PluginManager = require('./PluginManager');
+var ProjectManager = require('./ProjectManager');
 
 
 var KittenBlock = function () {
     var instance = this;
-    this.workpath = path.resolve(process.cwd(),'/plugin');
+    this.pluginpath = path.resolve(process.cwd(),'plugin');
+    this.workpath = path.resolve(process.cwd(),'workspace');
 
     instance.serial = new SerialConnection();
     instance.updater = new UpdateManager();
@@ -23,11 +25,13 @@ var KittenBlock = function () {
     instance.toolbox = new Toolbox();
     instance.resourcemng = new ResourceManager();
     instance.configmng  = new ConfigManager();
-    instance.plugin = new PluginManager(this.workpath);
+    instance.plugin = new PluginManager(this.pluginpath );
+    instance.proj = new ProjectManager(this.workpath);
 
     this.connectedPort = null;
     this.portList = [];
     this.config = this.configmng.load();
+    this.resourcemng.startServer(this.workpath );
 
 };
 
