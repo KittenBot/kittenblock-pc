@@ -63,7 +63,7 @@ ProjectManager.prototype.renameResourceToHash = function(folder){
             renameByMd5(folder, filepath, path.extname(filepath));
         }
     });
-}
+};
 
 /**
  * load sb2 format project file

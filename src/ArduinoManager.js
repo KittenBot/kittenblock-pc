@@ -99,7 +99,6 @@ ArduinoManager.prototype.openArduinoIde = function(code,path){
 
 ArduinoManager.prototype.parseLine = function(msg){
     var ret = null;
-    this.appendLog(msg, "LightSkyBlue");
     if (msg.indexOf("M3") > -1) {
         var tmp = msg.trim().split(" ");
         var pin = tmp[1];
