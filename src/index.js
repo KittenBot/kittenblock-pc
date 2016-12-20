@@ -3,6 +3,7 @@
  */
 "use strict";
 var path = require('path');
+var fs = require('fs');
 var EventEmitter = require('events');
 var SerialConnection = require('./SerialConnection');
 var UpdateManager = require('./UpdaterManager');
@@ -91,6 +92,15 @@ KittenBlock.prototype.loadDefaultProj = function () {
 KittenBlock.prototype.loadFirmware = function () {
     var inopath = path.resolve(this.arduinoPath,"\kb_firmware","kb_firmware.ino")
     return this.arduino.loadFactoryFirmware(inopath);
+};
+
+KittenBlock.prototype.openIno = function (code) {
+    var workspaceFolder = path.resolve(this.workpath,"\project");
+    var workspaceIno = path.resolve(this.workpath,"\project","project.ino");
+    if (!fs.existsSync(workspaceFolder)){
+        fs.mkdirSync(workspaceFolder);
+    }
+    this.arduino.openArduinoIde(code,workspaceIno);
 };
 
 
