@@ -11,17 +11,17 @@ var fs = require('fs');
 var cp = require('child_process');
 var ncp = require('./ncp').ncp;
 
-var ArduinoManager = function(){
+var ArduinoManager = function(cfg){
     this.autotranslate = false;
     this.sendCmdEvent = new chrome.Event();
-    this.baudrate = 115200;
+    this.baudrate = cfg.baudrate;
     this.editor = null;
-    this.arduinopath = "D:\\AAAA";
-    this.arduinoboard = "uno";
+    this.arduinopath = cfg.path;
+    this.arduinoboard = cfg.board;
     this.boardlist = [{"name":"Arduino UNO","type":"uno"},
         {"name":"Arduino NANO","type":"nano:cpu=atmega328"}];
     this.selectedBoard ="Arduino UNO";
-    this.lastSerialPort = "COM6";
+    this.lastSerialPort = cfg.lastserial;
     this.autotranslate = false;
     this.digitalQuery = {};
     this.analogQuery = {};
@@ -74,7 +74,7 @@ ArduinoManager.prototype.copyLibrary = function(src,callback){
 
 ArduinoManager.prototype.loadFactoryFirmware = function(inofilepath){
     var code = fs.readFileSync(inofilepath, 'utf8');
-    this.editor.setValue(code,-1);
+    return code;
 };
 
 ArduinoManager.prototype.openArduinoIde = function(code,path){
@@ -152,18 +152,6 @@ ArduinoManager.prototype.stopAll = function(){
     var msg = "M999\n"; // reset arduino board
     this.sendCmdEvent.dispatch(msg);
 };
-
-/*
-ArduinoInterface.prototype.appendLog = function(msg, color){
-    var psconsole = $('#console-log');
-    msg = String(msg); // change to string in case of object
-    if (!color) {
-        color = "green";
-    }
-    psconsole.append('<span style="color:' + color + '">' + msg + '</span><br/>');
-    psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height())
-};
-*/
 
 ArduinoManager.prototype.sendCmd = function(msg){
     this.sendCmdEvent.dispatch(msg);

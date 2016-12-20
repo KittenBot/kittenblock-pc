@@ -19,19 +19,21 @@ var KittenBlock = function () {
     this.pluginpath = path.resolve(process.cwd(),'plugin');
     this.workpath = path.resolve(process.cwd(),'workspace');
     this.defaultExamples = path.resolve(process.cwd(),'examples');
+    this.arduinoPath = path.resolve(process.cwd(),'arduino'); // not the one where arduino ide locate
+
+    instance.configmng  = new ConfigManager();
+    this.config = this.configmng.load();
 
     instance.serial = new SerialConnection();
     instance.updater = new UpdateManager();
-    instance.arduino = new ArduinoManager();
+    instance.arduino = new ArduinoManager(this.config.arduino);
     instance.toolbox = new Toolbox();
     instance.resourcemng = new ResourceManager();
-    instance.configmng  = new ConfigManager();
     instance.plugin = new PluginManager(this.pluginpath );
     instance.proj = new ProjectManager(this.workpath);
 
     this.connectedPort = null;
     this.portList = [];
-    this.config = this.configmng.load();
     this.resourcemng.startServer(this.workpath );
 
 };
@@ -85,6 +87,12 @@ KittenBlock.prototype.loadDefaultProj = function () {
     var projfile = path.resolve(this.defaultExamples,"kittenbot.sb2");
     this.proj.loadsb2(projfile);
 };
+
+KittenBlock.prototype.loadFirmware = function () {
+    var inopath = path.resolve(this.arduinoPath,"\kb_firmware","kb_firmware.ino")
+    return this.arduino.loadFactoryFirmware(inopath);
+};
+
 
 
 
