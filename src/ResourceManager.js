@@ -33,11 +33,11 @@ ResourceServer.prototype.startServer = function(workspacePath){
         console.log("server: " + action);
 
         if (action.indexOf("png") > -1 ) {
-            var img = fs.readFileSync(workspacePath + action.substr(1)); // remove slash
+            var img = fs.readFileSync(workspacePath + action); // remove slash
             res.writeHead(200, {'Content-Type': 'image/png'});
             res.end(img, 'binary');
         }else if(action.indexOf("svg") > -1){
-            var img = fs.readFileSync(workspacePath + action.substr(1)); // remove slash
+            var img = fs.readFileSync(workspacePath + action); // remove slash
             res.writeHead(200, {'Content-Type': 'image/svg+xml'});
             res.end(img, 'binary');
         } else {

@@ -11,7 +11,7 @@ function renameByMd5(folder, filepath, ext){
     var md5 = crypt.createHash('md5');
     md5.update(img, 'utf8');
     var md5str = md5.digest('hex');
-    var newFilepath = folder+md5str+ext;
+    var newFilepath = folder+"/"+md5str+ext;
     fs.rename(filepath,newFilepath, function(err) {
         if ( err ) console.log('ERROR: ' + err);
     });
