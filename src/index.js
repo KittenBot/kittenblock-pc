@@ -103,6 +103,18 @@ KittenBlock.prototype.openIno = function (code) {
     this.arduino.openArduinoIde(code,workspaceIno);
 };
 
+KittenBlock.prototype.uploadProject = function (code) {
+    var workspaceFolder = path.resolve(this.workpath,"\project");
+    var workspaceIno = path.resolve(this.workpath,"\project","project.ino");
+    if(this.serial.connectionId!=-1){
+        this.serial.disconnect();
+    }
+    if (!fs.existsSync(workspaceFolder)){
+        fs.mkdirSync(workspaceFolder);
+    }
+    this.arduino.uploadProject(code,workspaceIno);
+};
+
 
 
 

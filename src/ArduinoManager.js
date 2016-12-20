@@ -169,7 +169,7 @@ function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,lastSerialP
     //var verbose = config.debug==true?"-v":"";
 
     var verbose = "-v"; // always use verbose to get compile feedback
-    var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board arduino:avr:"+arduinoboard+" --port "+lastSerialPort+" "+process.cwd()+inofile;
+    var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board arduino:avr:"+arduinoboard+" --port "+lastSerialPort+" "+inofile;
     return cmd;
 }
 
@@ -217,56 +217,34 @@ ArduinoManager.prototype.compileCode = function(path,callback,errCallback){
 };
 
 ArduinoManager.prototype.uploadCode = function(path){
-    KBlock.arduino.checkArduinoPath();
-    if(KBlock.serial.connectionId!=-1){
-        KBlock.serial.disconnect();
-    }
-    var cmd = buildUploadCommand(path); // temporary project folder
+    this.checkArduinoPath();
+
+    var cmd = buildUploadCommand(path,"upload",this.arduinoboard,this.arduinopath,this.lastSerialPort); // temporary project folder
     console.log(cmd);
 
     var spawn = cp.exec(cmd,{
         encoding: 'utf8',
-        cwd: KBlock.arduino.arduinopath
+        cwd: this.arduinopath
     });
-    appendLog("Start Download");
-    appendLog(">>"+cmd,'blue');
-
 
     spawn.stdout.on('data', function (data) {
-        appendLog(data,'grey');
+        console.log(data+"");
     });
     spawn.stdout.on('end', function (code) {
-        appendLog("Download Finished");
+
     });
     spawn.stderr.on('data', function (data) {
-        if(data.indexOf("can't open device")>-1){
-            wzNotify("can't open device ", "danger");
-            appendLog(data,'orange');
-        }else if(data.indexOf("error")>-1){
-            wzNotify(data, "danger");
-            appendLog(data,'orange');
-        }else{
-            appendLog(data,'grey');
-        }
-
+        console.log(data+"");
     });
 };
 
-ArduinoManager.prototype.uploadProject = function(){
-    var code = this.editor.getValue();
-    var path = process.cwd()+"/arduino/project/project.ino";
+ArduinoManager.prototype.uploadProject = function(code,path){
+    var arduino = this;
     fs.writeFile(path, code, function(err) {
         if(err) {
             console.log("Save error "+err);
         }else{
-            if(KBlock.connected=="ipPort"){
-                KBlock.arduino.compileCode("/arduino/project/project.ino",function(){
-                    KBlock.udp.loadHex(KBlock.hexpath);
-                    KBlock.udp.stkStart();
-                });
-            }else{
-                KBlock.arduino.uploadCode("/arduino/project/project.ino");
-            }
+            arduino.uploadCode(path);
         }
     });
 };
