@@ -30,7 +30,7 @@ ResourceServer.prototype.startServer = function(workspacePath){
     this._server = http.createServer(function (req, res) {
         var request = url.parse(req.url, true);
         var action = request.pathname;
-        //console.log("server: " + action);
+        console.log("server: " + action);
 
         if (action.indexOf("png") > -1 ) {
             var img = fs.readFileSync(workspacePath + action.substr(1)); // remove slash

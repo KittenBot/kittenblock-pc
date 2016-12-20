@@ -117,6 +117,9 @@ KittenBlock.prototype.uploadProject = function (code,logCb,finishCb) {
     this.arduino.uploadProject(code,workspaceIno,logCb,finishCb);
 };
 
+KittenBlock.prototype.loadSb2 = function (filepath) {
+    this.proj.loadsb2(filepath);
+};
 
 
 
