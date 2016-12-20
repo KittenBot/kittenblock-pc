@@ -216,7 +216,7 @@ ArduinoManager.prototype.compileCode = function(path,callback,errCallback){
 
 };
 
-ArduinoManager.prototype.uploadCode = function(path){
+ArduinoManager.prototype.uploadCode = function(path,logCb,finishCb){
     this.checkArduinoPath();
 
     var cmd = buildUploadCommand(path,"upload",this.arduinoboard,this.arduinopath,this.lastSerialPort); // temporary project folder
@@ -228,23 +228,26 @@ ArduinoManager.prototype.uploadCode = function(path){
     });
 
     spawn.stdout.on('data', function (data) {
+        if(logCb) logCb(data+"");
         console.log(data+"");
     });
     spawn.stdout.on('end', function (code) {
-
+        if(finishCb) finishCb(0);
     });
     spawn.stderr.on('data', function (data) {
+        if(logCb) logCb(data+"");
         console.log(data+"");
     });
 };
 
-ArduinoManager.prototype.uploadProject = function(code,path){
+ArduinoManager.prototype.uploadProject = function(code,path,logCb,finishCb){
     var arduino = this;
     fs.writeFile(path, code, function(err) {
         if(err) {
             console.log("Save error "+err);
+            if(finishCb) finishCb(err);
         }else{
-            arduino.uploadCode(path);
+            arduino.uploadCode(path,logCb,finishCb);
         }
     });
 };
