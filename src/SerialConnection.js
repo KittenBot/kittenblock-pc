@@ -93,6 +93,8 @@ SerialConnection.prototype.onClosed = function(callback,result){
 };
 
 SerialConnection.prototype.connect = function(path, option, callback) {
+    this.onReadLine = new chrome.Event();
+    this.onDisconnect = new chrome.Event();
     chrome.serial.connect(path, option, this.onConnect.bind(this, callback));
 };
 

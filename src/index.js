@@ -47,6 +47,7 @@ KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb)
             ser.onReadLine.addListener(readlineCb);
             ser.onDisconnect.addListener(function () {
                 _this.connectedPort = null;
+
                 closeCb();
             });
             _this.connectedPort = {"path":port.path,"type":"serial"};
