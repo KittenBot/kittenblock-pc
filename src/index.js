@@ -30,7 +30,7 @@ var KittenBlock = function () {
     instance.arduino = new ArduinoManager(this.config.arduino);
     instance.toolbox = new Toolbox();
     instance.resourcemng = new ResourceManager();
-    instance.pluginmng = new PluginManager(this.pluginpath );
+    instance.pluginmng = new PluginManager(this.pluginpath,this.config.enabledPlugin);
     instance.proj = new ProjectManager(this.workpath);
 
     this.connectedPort = null;

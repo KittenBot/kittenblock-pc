@@ -5,11 +5,12 @@ var fs = require("fs");
 var path = require("path");
 var util = require("./Utils");
 
-var PluginManager = function(pluginfolder){
+var PluginManager = function(pluginfolder,enabled){
     this.pluginfolder = pluginfolder;
     this.pluginlist = [];
     this.pluginmodule = null;
     this.pluginPackage = {};
+    this.enabled = enabled;
 };
 
 module.exports = PluginManager;
@@ -23,7 +24,8 @@ PluginManager.prototype.enumPlugins = function(){
     plugin.forEach(function (p) {
         var uri = path.resolve(folder,p);
         if(fs.lstatSync(uri).isDirectory()) {
-            manager.pluginlist.push(p);
+            var pluginobj = {"name":p,"active":manager.enabled==p?true:false};
+            manager.pluginlist.push(pluginobj);
         }
     });
     return this.pluginlist;
