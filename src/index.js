@@ -127,5 +127,12 @@ KittenBlock.prototype.loadPlugin = function (pluginName,vmruntime) {
     this.plugin = new (this.pluginmodule)(this);
 };
 
+KittenBlock.prototype.saveConfig = function () {
+    this.configmng.save(this.config);
+};
+
+KittenBlock.prototype.reloadApp = function () {
+    document.location.reload(true); // reload all
+};
 
 module.exports = KittenBlock;

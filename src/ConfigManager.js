@@ -14,6 +14,11 @@ ConfigManager.prototype.load = function () {
     return JSON.parse(s);
 };
 
+ConfigManager.prototype.save = function (config) {
+    var configstr = JSON.stringify(config);
+    var s = fs.writeFileSync(this.configFile, configstr);
+};
+
 module.exports = ConfigManager;
 
 
