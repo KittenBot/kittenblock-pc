@@ -8,7 +8,7 @@ var util = require("./Utils");
 var PluginManager = function(pluginfolder){
     this.pluginfolder = pluginfolder;
     this.pluginlist = [];
-    this.enabledPlugin = null;
+    this.pluginmodule = null;
     this.pluginPackage = {};
 };
 
@@ -29,12 +29,11 @@ PluginManager.prototype.enumPlugins = function(){
     return this.pluginlist;
 };
 
-PluginManager.prototype.loadPlugins = function(plugin){
+PluginManager.prototype.loadPlugins = function(plugin,vmruntime){
     var uri = path.resolve(this.pluginfolder,plugin,plugin+".js");
     var f = fs.readFileSync(uri,'utf-8');
-    var pluginmodule = eval(f);
-    this.enabledPlugin = new pluginmodule();
-    this.pluginPackage[plugin] = pluginmodule;
+    this.pluginmodule = eval(f);
+    return this.pluginmodule;
 };
 
 

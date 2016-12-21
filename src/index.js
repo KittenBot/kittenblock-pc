@@ -17,7 +17,7 @@ var ProjectManager = require('./ProjectManager');
 
 var KittenBlock = function () {
     var instance = this;
-    this.pluginpath = path.resolve(process.cwd(),'plugin');
+    this.pluginpath = path.resolve(process.cwd(),'plugins');
     this.workpath = path.resolve(process.cwd(),'workspace');
     this.defaultExamples = path.resolve(process.cwd(),'examples');
     this.arduinoPath = path.resolve(process.cwd(),'arduino'); // not the one where arduino ide locate
@@ -30,12 +30,13 @@ var KittenBlock = function () {
     instance.arduino = new ArduinoManager(this.config.arduino);
     instance.toolbox = new Toolbox();
     instance.resourcemng = new ResourceManager();
-    instance.plugin = new PluginManager(this.pluginpath );
+    instance.pluginmng = new PluginManager(this.pluginpath );
     instance.proj = new ProjectManager(this.workpath);
 
     this.connectedPort = null;
     this.portList = [];
     this.resourcemng.startServer(this.workpath );
+    this.pluginlist = this.pluginmng.enumPlugins();
 
 };
 
@@ -121,6 +122,10 @@ KittenBlock.prototype.loadSb2 = function (filepath) {
     this.proj.loadsb2(filepath);
 };
 
+KittenBlock.prototype.loadPlugin = function (pluginName,vmruntime) {
+    this.pluginmodule = this.pluginmng.loadPlugins(pluginName,vmruntime);
+    this.plugin = new (this.pluginmodule)(this);
+};
 
 
 module.exports = KittenBlock;
