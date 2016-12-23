@@ -9,7 +9,7 @@
 
 var fs = require('fs');
 var cp = require('child_process');
-var ncp = require('./ncp').ncp;
+var ncp = require('ncp').ncp;
 
 var ArduinoManager = function(cfg){
     this.autotranslate = false;

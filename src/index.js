@@ -128,7 +128,7 @@ KittenBlock.prototype.loadSb2 = function (filepath) {
 
 KittenBlock.prototype.copyArduinoLibrary = function (srcpath) {
     if(!srcpath){
-        srcpath = path.resolve(this.arduinoPath,'lib')
+        srcpath = path.resolve(this.arduinoPath,'lib/')
     }
     this.arduino.copyLibrary(srcpath);
 };
