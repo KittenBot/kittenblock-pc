@@ -27,6 +27,7 @@ var ArduinoManager = function(cfg){
     this.analogQuery = {};
     this.appendLog = null;
     this.notify = null;
+    this.pluginPareLine = null;
 };
 
 ArduinoManager.prototype.checkArduinoPath = function(callback){
@@ -98,6 +99,9 @@ ArduinoManager.prototype.openArduinoIde = function(code,path){
 };
 
 ArduinoManager.prototype.parseLine = function(msg){
+    if(this.pluginPareLine){
+        return this.pluginPareLine(msg);
+    }
     var ret = null;
     if (msg.indexOf("M3") > -1) {
         var tmp = msg.trim().split(" ");

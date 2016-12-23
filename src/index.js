@@ -94,8 +94,10 @@ KittenBlock.prototype.loadDefaultProj = function () {
     this.proj.loadsb2(projfile);
 };
 
-KittenBlock.prototype.loadFirmware = function () {
-    var inopath = path.resolve(this.arduinoPath,"\kb_firmware","kb_firmware.ino")
+KittenBlock.prototype.loadFirmware = function (inopath) {
+    if(!inopath) {
+        var inopath = path.resolve(this.arduinoPath, "\kb_firmware", "kb_firmware.ino")
+    }
     return this.arduino.loadFactoryFirmware(inopath);
 };
 
@@ -124,6 +126,13 @@ KittenBlock.prototype.loadSb2 = function (filepath) {
     return this.proj.loadsb2(filepath);
 };
 
+KittenBlock.prototype.copyArduinoLibrary = function (srcpath) {
+    if(!srcpath){
+        srcpath = path.resolve(this.arduinoPath,'lib')
+    }
+    this.arduino.copyLibrary(srcpath);
+};
+
 KittenBlock.prototype.loadPlugin = function (pluginName,vmruntime) {
     this.pluginmodule = this.pluginmng.loadPlugins(pluginName,vmruntime);
     this.plugin = new (this.pluginmodule)(this);
@@ -150,6 +159,10 @@ KittenBlock.prototype.selectPlugin = function (plugin) {
     this.pluginmng.enabled = plugin;
     this.pluginlist = this.pluginmng.enumPlugins();
     return this.pluginlist;
+};
+
+KittenBlock.prototype.setPluginParseLine = function (func) {
+    this.arduino.pluginPareLine = func;
 };
 
 module.exports = KittenBlock;
