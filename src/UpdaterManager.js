@@ -7,8 +7,8 @@ var fs = require("fs");
 var path = require("path");
 var admzip = require("adm-zip");
 
-var UpdateManager = function(){
-    this.version = 0.01;
+var UpdateManager = function(version){
+    this.version = version;
 };
 
 var download = function(url, dest, cb, progressCb) {

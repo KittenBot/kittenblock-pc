@@ -119,7 +119,7 @@ KittenBlock.prototype.uploadProject = function (code,logCb,finishCb) {
 };
 
 KittenBlock.prototype.loadSb2 = function (filepath) {
-    this.proj.loadsb2(filepath);
+    return this.proj.loadsb2(filepath);
 };
 
 KittenBlock.prototype.loadPlugin = function (pluginName,vmruntime) {
@@ -134,5 +134,13 @@ KittenBlock.prototype.saveConfig = function () {
 KittenBlock.prototype.reloadApp = function () {
     document.location.reload(true); // reload all
 };
+
+KittenBlock.prototype.loadKb = function (kbpath) {
+    return this.proj.loadkb(kbpath);
+};
+
+KittenBlock.prototype.saveKb = function (kbpath,xml) {
+    return this.proj.savekb(kbpath,xml);
+}
 
 module.exports = KittenBlock;
