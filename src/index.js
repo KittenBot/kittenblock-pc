@@ -44,16 +44,18 @@ KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb)
     var _this = this;
     if(port.type=='serial'){
         var ser = this.serial;
-        ser.connect(port.path,{bitrate: this.config.arduino.baudrate},function () {
-            ser.onReadLine.addListener(readlineCb);
-            ser.onDisconnect.addListener(function () {
-                _this.connectedPort = null;
+        ser.connect(port.path,{bitrate: this.config.arduino.baudrate},function (ret) {
+            if(ret!=-1) {
+                ser.onReadLine.addListener(readlineCb);
+                ser.onDisconnect.addListener(function () {
+                    _this.connectedPort = null;
 
-                closeCb();
-            });
-            _this.connectedPort = {"path":port.path,"type":"serial"};
-            _this.arduino.lastSerialPort = port.path;
-            successCb(port.path);
+                    closeCb();
+                });
+                _this.connectedPort = {"path": port.path, "type": "serial"};
+                _this.arduino.lastSerialPort = port.path;
+                successCb(port.path);
+            }
         });
     }
 };
@@ -141,6 +143,13 @@ KittenBlock.prototype.loadKb = function (kbpath) {
 
 KittenBlock.prototype.saveKb = function (kbpath,xml) {
     return this.proj.savekb(kbpath,xml);
-}
+};
+
+KittenBlock.prototype.selectPlugin = function (plugin) {
+    this.config.enabledPlugin = plugin;
+    this.pluginmng.enabled = plugin;
+    this.pluginlist = this.pluginmng.enumPlugins();
+    return this.pluginlist;
+};
 
 module.exports = KittenBlock;

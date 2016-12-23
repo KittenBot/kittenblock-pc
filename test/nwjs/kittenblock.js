@@ -76,7 +76,7 @@ module.exports =
 	    var _this = this;
 	    if (port.type == 'serial') {
 	        var ser = this.serial;
-	        ser.connect(port.path, { bitrate: this.config.baudrate }, function () {
+	        ser.connect(port.path, { bitrate: this.config.baudrate }, function (ret) {
 	            ser.onReadLine.addListener(readlineCb);
 	            ser.onDisconnect.addListener(function () {
 	                _this.connectedPort = null;

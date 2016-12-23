@@ -91,10 +91,9 @@ ProjectManager.prototype.loadsb2 = function(filepath){
 ProjectManager.prototype.loadkb = function (filepath) {
     var projName = path.basename(filepath, '.kb');
     // 1. extract sb2 file to workspace
-    var zip = new admzip(filepath);
-    var zipEntries = zip.getEntries();
-    zip.extractAllTo(this.workspaceFolder,true);
-
+    var xml = fs.readFileSync(filepath, 'utf8');
+    var obj = {"name":projName,"xml":xml};
+    return obj;
 };
 
 ProjectManager.prototype.savekb = function (filepath,xml) {
