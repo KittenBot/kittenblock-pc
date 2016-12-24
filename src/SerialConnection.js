@@ -10,6 +10,7 @@ var SerialConnection = function() {
     this.boundOnReceiveError = this.onReceiveError.bind(this);
     this.onReadLine = new chrome.Event();
     this.onDisconnect = new chrome.Event();
+    this.pluginRecv = null;
 };
 
 /* Interprets an ArrayBuffer as UTF-8 encoded string data. */
@@ -50,6 +51,9 @@ SerialConnection.prototype.onReceive = function(receiveInfo) {
     if (receiveInfo.connectionId !== this.connectionId) {
         return;
     }
+    if(this.pluginRecv){
+        return this.pluginRecv(receiveInfo.data);
+    }
     //console.log("buf "+receiveInfo.data.byteLength+">>"+ab2str(receiveInfo.data));
     this.lineBuffer += ab2str(receiveInfo.data);
     var index;
@@ -75,7 +79,6 @@ SerialConnection.prototype.onConnect = function(callback,connectionInfo){
         return;
     }
     this.connectionId = connectionInfo.connectionId;
-
     chrome.serial.onReceive.addListener(this.boundOnReceive);
     chrome.serial.onReceiveError.addListener(this.boundOnReceiveError);
     this.lineBuffer = "";
@@ -92,9 +95,12 @@ SerialConnection.prototype.onClosed = function(callback,result){
     if (callback) callback();
 };
 
-SerialConnection.prototype.connect = function(path, option, callback) {
+SerialConnection.prototype.connect = function(path, option, callback,onRcv) {
     this.onReadLine = new chrome.Event();
     this.onDisconnect = new chrome.Event();
+
+    this.pluginRecv = onRcv;
+
     chrome.serial.connect(path, option, this.onConnect.bind(this, callback));
 };
 
@@ -111,7 +117,6 @@ SerialConnection.prototype.send = function(msg){
 
 SerialConnection.prototype.sendbuf = function(buffer){
     if(this.connectionId==-1) return;
-    console.log("send "+buffer);
     chrome.serial.send(this.connectionId, buffer, function() {});
 };
 

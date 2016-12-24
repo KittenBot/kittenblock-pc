@@ -40,7 +40,7 @@ var KittenBlock = function () {
 
 };
 
-KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb) {
+KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb,onRecv) {
     var _this = this;
     if(port.type=='serial'){
         var ser = this.serial;
@@ -56,7 +56,7 @@ KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb)
                 _this.arduino.lastSerialPort = port.path;
                 successCb(port.path);
             }
-        });
+        },onRecv);
     }
 };
 
@@ -69,7 +69,11 @@ KittenBlock.prototype.disonnectPort = function (callback) {
 
 KittenBlock.prototype.sendCmd = function (data) {
     if(this.connectedPort && this.connectedPort.type=='serial'){
-        this.serial.send(data+'\r\n');
+        if(data instanceof Uint8Array){
+            this.serial.sendbuf(data.buffer);
+        }else{
+            this.serial.send(data+'\r\n');
+        }
     }
 };
 
