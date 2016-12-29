@@ -113,6 +113,8 @@ ArduinoManager.prototype.parseLine = function(msg){
         var pin = tmp[1];
         var val = tmp[2];
         this.analogQuery[pin] = val;
+    }else if(msg.indexOf("M100") > -1 ){
+        window.vm.postIOData('serial', {slot: "M100", report: null});
     }else if(msg.indexOf("M101") > -1 ){
         window.vm.postIOData('serial', {slot: "M101", report: null});
     }else if(msg.indexOf("M8") > -1){
