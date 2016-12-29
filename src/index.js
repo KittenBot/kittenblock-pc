@@ -169,4 +169,9 @@ KittenBlock.prototype.setPluginParseLine = function (func) {
     this.arduino.pluginPareLine = func;
 };
 
+KittenBlock.prototype.selectBoard = function (board) {
+    this.config.arduino.board = board.type;
+    this.arduino.arduinoboard = this.config.arduino.board;
+};
+
 module.exports = KittenBlock;
