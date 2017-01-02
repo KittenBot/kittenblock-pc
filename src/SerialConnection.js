@@ -111,7 +111,6 @@ SerialConnection.prototype.disconnect = function(callback){
 
 SerialConnection.prototype.send = function(msg){
     if(this.connectionId==-1) return;
-    console.log("send "+msg);
     chrome.serial.send(this.connectionId, str2ab(msg), function() {});
 };
 

@@ -175,7 +175,10 @@ function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,lastSerialP
     //var verbose = config.debug==true?"-v":"";
 
     var verbose = "-v"; // always use verbose to get compile feedback
-    var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board arduino:avr:"+arduinoboard+" --port "+lastSerialPort+" "+inofile;
+    var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board "+arduinoboard;
+    if(lastSerialPort)
+        cmd+= " --port "+lastSerialPort;
+    cmd+=" "+inofile;
     return cmd;
 }
 
