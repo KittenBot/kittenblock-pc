@@ -4,9 +4,11 @@
 
 
 var fs = require('fs');
+var path = require('path');
 var http = require('http');
 var url = require('url');
 var crypt = require('crypto');
+var ncp = require('ncp').ncp;
 
 var ResourceServer = function(){
     this._server = null;
@@ -26,11 +28,23 @@ ResourceServer.prototype.getSpriteSkin = function(spriteId){
     return "";
 };
 
+ResourceServer.prototype.copyToWorkspace = function (srcmd5,mediapath,workspacepath,callback) {
+    var src = path.resolve(mediapath,'medialibraries/',srcmd5);
+    var dst = path.resolve(workspacepath,srcmd5);
+    ncp(src, dst, function (err) {
+        if (err) {
+            console.log(err);
+            if(callback) callback(err);
+            throw err;
+        }
+        if(callback) callback(0);
+    });
+};
+
 ResourceServer.prototype.startServer = function(workspacePath,mediapath){
     this._server = http.createServer(function (req, res) {
         var request = url.parse(req.url, true);
         var action = request.pathname;
-        //console.log("server: " + action);
         var resourcepath = workspacePath;
         if(action.indexOf("medialibraries/")>-1){
             resourcepath = mediapath;
@@ -49,6 +63,7 @@ ResourceServer.prototype.startServer = function(workspacePath,mediapath){
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(json, 'binary');
         }else{
+            console.log("server: " + action);
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end('Hello World \n');
         }
