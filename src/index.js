@@ -56,6 +56,8 @@ KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb,
                 });
                 _this.connectedPort = {"path": port.path, "type": "serial"};
                 _this.arduino.lastSerialPort = port.path;
+                _this.config.arduino.lastSerialPort = port.path;
+                _this.saveConfig();
                 successCb(port.path);
             }
         },onRecv);
@@ -174,6 +176,7 @@ KittenBlock.prototype.setPluginParseLine = function (func) {
 KittenBlock.prototype.selectBoard = function (board) {
     this.config.arduino.board = board.type;
     this.arduino.arduinoboard = this.config.arduino.board;
+    this.saveConfig();
 };
 
 KittenBlock.prototype.copyResourceToWorkspace = function (resourceMd5) {
