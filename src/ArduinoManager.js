@@ -163,7 +163,7 @@ ArduinoManager.prototype.sendCmd = function(msg){
     this.sendCmdEvent.dispatch(msg);
 };
 
-function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,lastSerialPort){
+function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,uploadPort){
     if(!cmdType){
         cmdType = "upload";
     }
@@ -176,8 +176,8 @@ function buildUploadCommand(inofile,cmdType,arduinoboard,arduinopath,lastSerialP
 
     var verbose = "-v"; // always use verbose to get compile feedback
     var cmd = exec+" "+verbose+" --"+cmdType+" --pref build.path="+builtpath+" --board "+arduinoboard;
-    if(lastSerialPort)
-        cmd+= " --port "+lastSerialPort;
+    if(uploadPort)
+        cmd+= " --port "+uploadPort;
     cmd+=" "+inofile;
     return cmd;
 }
@@ -187,7 +187,7 @@ ArduinoManager.prototype.compileCode = function(path,callback,errCallback){
     var arduinopath = this.arduinopath;
     this.checkArduinoPath();
 
-    var cmd = buildUploadCommand(path,"verify",this.arduinoboard,this.arduinopath,this.lastSerialPort);
+    var cmd = buildUploadCommand(path,"verify",this.arduinoboard,this.arduinopath);
     console.log(cmd);
 
     var spawn = cp.exec(cmd,{
@@ -225,10 +225,10 @@ ArduinoManager.prototype.compileCode = function(path,callback,errCallback){
 
 };
 
-ArduinoManager.prototype.uploadCode = function(path,logCb,finishCb){
+ArduinoManager.prototype.uploadCode = function(path,logCb,finishCb,uploadPort){
     this.checkArduinoPath();
 
-    var cmd = buildUploadCommand(path,"upload",this.arduinoboard,this.arduinopath,this.lastSerialPort); // temporary project folder
+    var cmd = buildUploadCommand(path,"upload",this.arduinoboard,this.arduinopath,uploadPort); // temporary project folder
     console.log(cmd);
 
     var spawn = cp.exec(cmd,{

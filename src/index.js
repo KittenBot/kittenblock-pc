@@ -19,11 +19,13 @@ var KittenBlock = function () {
     var instance = this;
     this.pluginpath = path.resolve(process.cwd(),'plugins');
     this.workpath = path.resolve(process.cwd(),'workspace');
+    this.mediapath = path.resolve(process.cwd(),'media');
     this.defaultExamples = path.resolve(process.cwd(),'examples');
     this.arduinoPath = path.resolve(process.cwd(),'arduino'); // not the one where arduino ide locate
 
     instance.configmng  = new ConfigManager();
     this.config = this.configmng.load();
+    this.config.arduino.path = this.arduinoPath;
 
     instance.serial = new SerialConnection();
     instance.updater = new UpdateManager();
@@ -35,7 +37,7 @@ var KittenBlock = function () {
 
     this.connectedPort = null;
     this.portList = [];
-    this.resourcemng.startServer(this.workpath );
+    this.resourcemng.startServer(this.workpath,this.mediapath);
     this.pluginlist = this.pluginmng.enumPlugins();
 
 };
