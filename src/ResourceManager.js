@@ -3,12 +3,11 @@
  */
 
 
-var fs = require('fs');
 var path = require('path');
 var http = require('http');
 var url = require('url');
 var crypt = require('crypto');
-var ncp = require('ncp').ncp;
+var fs = require('fs-extra');
 
 var ResourceServer = function(){
     this._server = null;
@@ -28,17 +27,10 @@ ResourceServer.prototype.getSpriteSkin = function(spriteId){
     return "";
 };
 
-ResourceServer.prototype.copyToWorkspace = function (srcmd5,mediapath,workspacepath,callback) {
+ResourceServer.prototype.copyToWorkspace = function (srcmd5,mediapath,workspacepath) {
     var src = path.resolve(mediapath,'medialibraries/',srcmd5);
     var dst = path.resolve(workspacepath,srcmd5);
-    ncp(src, dst, function (err) {
-        if (err) {
-            console.log(err);
-            if(callback) callback(err);
-            throw err;
-        }
-        if(callback) callback(0);
-    });
+    fs.copySync(src, dst);
 };
 
 ResourceServer.prototype.startServer = function(workspacePath,mediapath){

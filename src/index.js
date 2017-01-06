@@ -176,8 +176,8 @@ KittenBlock.prototype.selectBoard = function (board) {
     this.arduino.arduinoboard = this.config.arduino.board;
 };
 
-KittenBlock.prototype.copyResourceToWorkspace = function (resourceMd5,callback) {
-    this.resourcemng.copyToWorkspace(resourceMd5,this.mediapath,this.workpath,callback);
+KittenBlock.prototype.copyResourceToWorkspace = function (resourceMd5) {
+    this.resourcemng.copyToWorkspace(resourceMd5,this.mediapath,this.workpath);
 };
 
 module.exports = KittenBlock;
