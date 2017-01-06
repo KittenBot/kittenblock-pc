@@ -38,7 +38,9 @@ ArduinoManager.prototype.checkArduinoPath = function(callback){
             }
             throw err;
         }else{
-            callback(0);
+            if(callback) {
+                callback(0);
+            }
         }
     });
 };
@@ -227,7 +229,9 @@ ArduinoManager.prototype.compileCode = function(path,callback,errCallback){
 
 ArduinoManager.prototype.uploadCode = function(path,logCb,finishCb,uploadPort){
     this.checkArduinoPath();
-
+    if(this.arduinoboard.indexOf('arduino')>-1){
+        uploadPort = this.lastSerialPort;
+    }
     var cmd = buildUploadCommand(path,"upload",this.arduinoboard,this.arduinopath,uploadPort); // temporary project folder
     console.log(cmd);
 
