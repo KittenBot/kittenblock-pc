@@ -65,6 +65,11 @@ KittenBlock.prototype.connectPort = function (port,successCb,readlineCb,closeCb,
                 successCb(port.path);
             }
         },onRecv);
+    }else if(port.type=='net'){
+        this.net.promoteIpDialog(function (connectedPort) {
+            _this.connectedPort = {"path": connectedPort, "type": "net"};
+            successCb(connectedPort);
+        },port.ip,readlineCb,closeCb);
     }
 };
 
@@ -72,6 +77,9 @@ KittenBlock.prototype.disonnectPort = function (callback) {
     if(this.connectedPort==null) return;
     if(this.connectedPort.type=='serial'){
         this.serial.disconnect(callback);
+    }else if(this.connectedPort.type=='net'){
+        this.net.disconnect(callback);
+        this.connectedPort = null;
     }
 };
 
@@ -88,6 +96,12 @@ KittenBlock.prototype.sendCmd = function (data) {
 KittenBlock.prototype.enumPort = function (callback) {
     var kb = this;
     kb.portList = [];
+    for(var key in this.net.robotlist){
+        var ip = this.net.robotlist[key];
+        key = key+":"+ip;
+        var port = {"path":key,"type":'net',ip:ip};
+        this.portList.push(port);
+    }
     this.serial.enumSerial(function (devices) {
         devices.forEach(function (dev) {
             var port = {"path":dev.path,"type":'serial'};
@@ -95,6 +109,8 @@ KittenBlock.prototype.enumPort = function (callback) {
         });
         if(callback) callback(kb.portList);
     });
+
+    this.net.pingRobot();
 };
 
 KittenBlock.prototype.getUpdate = function (callback) {

@@ -65,6 +65,7 @@ var NetworkConnection = function(){
     this.sock = null;
     this.ping = null;
     this.stkMode = null;
+    this.disonnCallback = null;
     this.lastStkCode;
     this.progaddr = 0;
     this.hexLineIndex = 0;
@@ -252,7 +253,7 @@ NetworkConnection.prototype.pingRobot = function(){
 };
 
 
-NetworkConnection.prototype.promoteIpDialog = function(callback,robotip){
+NetworkConnection.prototype.promoteIpDialog = function(callback,robotip,readlineCb,closeCb){
     if(!robotip){
         robotip = "192.168.4.1:1025";
     }else{
@@ -263,7 +264,12 @@ NetworkConnection.prototype.promoteIpDialog = function(callback,robotip){
         var tmp = ip_port.split(":");
         this.remoteIp = tmp[0];
         this.remotePort = parseInt(tmp[1]);
-        this.initSocket(callback);
+        this.r
+        this.initSocket(function () {
+            if(callback){
+                callback(ip_port);
+            }
+        });
     }
 
 };
@@ -278,6 +284,9 @@ NetworkConnection.prototype.sendCmd = function(msg){
 
 NetworkConnection.prototype.disconnect = function(){
     this.sock.close();
+    if(this.disonnCallback){
+        this.disonnCallback();
+    }
 };
 
 
