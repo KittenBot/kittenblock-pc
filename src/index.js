@@ -22,10 +22,12 @@ var KittenBlock = function () {
     this.mediapath = path.resolve(process.cwd(),'media');
     this.defaultExamples = path.resolve(process.cwd(),'examples');
     this.arduinoPath = path.resolve(process.cwd(),'arduino'); // not the one where arduino ide locate
+    this.updatePath = path.resolve(process.cwd());
 
     instance.configmng  = new ConfigManager();
     this.config = this.configmng.load();
     this.config.arduino.path = this.arduinoPath;
+    this.config.version = "1.11"; // don't read from config file any more
 
     instance.serial = new SerialConnection();
     instance.updater = new UpdateManager();
@@ -181,6 +183,10 @@ KittenBlock.prototype.selectBoard = function (board) {
 
 KittenBlock.prototype.copyResourceToWorkspace = function (resourceMd5) {
     this.resourcemng.copyToWorkspace(resourceMd5,this.mediapath,this.workpath);
+};
+
+KittenBlock.prototype.doUpdate = function (updater,updateDone,updateProgress) {
+    this.updater.doUpdate(updater.path,this.updatePath,updateDone,updateProgress);
 };
 
 module.exports = KittenBlock;

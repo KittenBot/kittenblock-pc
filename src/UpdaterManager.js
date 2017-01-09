@@ -1,11 +1,12 @@
 /**
  * Created by Riven on 2016/12/15.
  */
+"use strict";
 
 var http = require("http");
-var fs = require("fs");
-var path = require("path");
-var admzip = require("adm-zip");
+var fs = require('fs');
+var path = require('path');
+var admzip = require('adm-zip');
 
 var UpdateManager = function(version){
     this.version = version;
@@ -14,9 +15,6 @@ var UpdateManager = function(version){
 var download = function(url, dest, cb, progressCb) {
     var file = fs.createWriteStream(dest);
     var request = http.get(url, function(response) {
-        if(progressCb){
-            progressCb(0);
-        }
         var totallen = parseInt(response.headers['content-length'], 10);
         var count=0;
         response.pipe(file);
@@ -37,7 +35,7 @@ var download = function(url, dest, cb, progressCb) {
 };
 
 UpdateManager.prototype.getServer = function(callback){
-    http.get("http://120.76.118.117:1619/version",function(res){
+    http.get("http://download.kittenbot.cn/version.json",function(res){
         const statusCode = res.statusCode;
         const contentType = res.headers['content-type'];
         var body = '';
@@ -55,16 +53,17 @@ UpdateManager.prototype.getServer = function(callback){
     });
 };
 
-UpdateManager.prototype.doUpdate = function(path,extractPath,callback,progressCb){
-    download(path,"update.zip",function(err){
+UpdateManager.prototype.doUpdate = function(updatePath,extractPath,callback,progressCb){
+    var tempFile = path.resolve(process.cwd(),'update.zip');
+    download(updatePath,tempFile,function(err){
         if(err){
             if(callback){
-                callback(-1,err);
+                callback(err);
             }
             return;
         }
 
-        var zip = new admzip("update.zip");
+        var zip = new admzip(tempFile);
         var zipEntries = zip.getEntries();
         zip.extractAllTo(extractPath,true);
         callback(0);
