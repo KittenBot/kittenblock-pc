@@ -13,6 +13,7 @@ var ResourceManager = require('./ResourceManager');
 var ConfigManager = require('./ConfigManager');
 var PluginManager = require('./PluginManager');
 var ProjectManager = require('./ProjectManager');
+var NetworkConnection = require('./NetConnection');
 
 
 var KittenBlock = function () {
@@ -36,6 +37,7 @@ var KittenBlock = function () {
     instance.resourcemng = new ResourceManager();
     instance.pluginmng = new PluginManager(this.pluginpath,this.config.enabledPlugin);
     instance.proj = new ProjectManager(this.workpath);
+    instance.net  = new NetworkConnection();
 
     this.connectedPort = null;
     this.portList = [];

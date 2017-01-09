@@ -4,63 +4,64 @@
 
 var dgram = require('dgram');
 
-ARDUINO_PAGE_SIZE = 128;
-
-STK_OK = 0x10;
-STK_FAILED = 0x11;  //Notused
-STK_UNKNOWN = 0x12;  //Notused
-STK_NODEVICE = 0x13;  //Notused
-STK_INSYNC = 0x14;  //''
-STK_NOSYNC = 0x15;  //Notused
-ADC_CHANNEL_ERROR = 0x16;  //Notused
-ADC_MEASURE_OK = 0x17;  //Notused
-PWM_CHANNEL_ERROR = 0x18;  //Notused
-PWM_ADJUST_OK = 0x19;  //Notused
-CRC_EOP = 0x20;  //'SPACE'
-STK_GET_SYNC = 0x30;  //'0'
-STK_GET_SIGN_ON = 0x31;  //'1'
-
-STK_SET_PARAMETER = 0x40;  //'@'
-
-STK_GET_PARAMETER = 0x41;  //'A'
-
-STK_SET_DEVICE = 0x42;  //'B'
-STK_SET_DEVICE_EXT = 0x45;  //'E'
-STK_ENTER_PROGMODE = 0x50;  //'P'
-STK_LEAVE_PROGMODE = 0x51;  //'Q'
-STK_CHIP_ERASE = 0x52;  //'R'
-STK_CHECK_AUTOINC = 0x53;  //'S'
-STK_LOAD_ADDRESS = 0x55;  //'U'
-STK_UNIVERSAL = 0x56;  //'V'
-STK_PROG_FLASH = 0x60;  //'`'
-STK_PROG_DATA = 0x61;  //'a'
-STK_PROG_FUSE = 0x62;  //'b'
-STK_PROG_LOCK = 0x63;  //'c'
-STK_PROG_PAGE = 0x64;  //'d'
-STK_PROG_FUSE_EXT = 0x65;  //'e'
-STK_READ_FLASH = 0x70;  //'p'
-STK_READ_DATA = 0x71;  //'q'
-STK_READ_FUSE = 0x72;  //'r'
-STK_READ_LOCK = 0x73;  //'s'
-STK_READ_PAGE = 0x74;  //'t'
-STK_READ_SIGN = 0x75;  //'u'
-STK_READ_OSCCAL = 0x76;  //'v'
-STK_READ_FUSE_EXT = 0x77;  //'w'
-STK_READ_OSCCAL_EXT = 0x78;  //'x'
-
-CAT_SETADDR = 0x41;  //'A'
-CAT_WRITE = 0x42;  //'B'
-CAT_QUIT = 0x45;  //'E'
-
-QUERY_HW_VER = 0x80;
-QUERY_SW_MAJOR = 0x81;
-QUERY_SW_MINOR = 0x82;
-
-DOWNLOAD_SENDADDR = 0xE0;
-DOWNLOAD_SENDCODE = 0xE1;
-
 
 var NetworkConnection = function(){
+    /* const for download protocol */
+    this.ARDUINO_PAGE_SIZE = 128;
+
+    this.STK_OK = 0x10;
+    this.STK_FAILED = 0x11;  //Notused
+    this.STK_UNKNOWN = 0x12;  //Notused
+    this.STK_NODEVICE = 0x13;  //Notused
+    this.STK_INSYNC = 0x14;  //''
+    this.STK_NOSYNC = 0x15;  //Notused
+    this.ADC_CHANNEL_ERROR = 0x16;  //Notused
+    this.ADC_MEASURE_OK = 0x17;  //Notused
+    this.PWM_CHANNEL_ERROR = 0x18;  //Notused
+    this.PWM_ADJUST_OK = 0x19;  //Notused
+    this.CRC_EOP = 0x20;  //'SPACE'
+    this.STK_GET_SYNC = 0x30;  //'0'
+    this.STK_GET_SIGN_ON = 0x31;  //'1'
+
+    this.STK_SET_PARAMETER = 0x40;  //'@'
+
+    this.STK_GET_PARAMETER = 0x41;  //'A'
+
+    this.STK_SET_DEVICE = 0x42;  //'B'
+    this.STK_SET_DEVICE_EXT = 0x45;  //'E'
+    this.STK_ENTER_PROGMODE = 0x50;  //'P'
+    this.STK_LEAVE_PROGMODE = 0x51;  //'Q'
+    this.STK_CHIP_ERASE = 0x52;  //'R'
+    this.STK_CHECK_AUTOINC = 0x53;  //'S'
+    this.STK_LOAD_ADDRESS = 0x55;  //'U'
+    this.STK_UNIVERSAL = 0x56;  //'V'
+    this.STK_PROG_FLASH = 0x60;  //'`'
+    this.STK_PROG_DATA = 0x61;  //'a'
+    this.STK_PROG_FUSE = 0x62;  //'b'
+    this.STK_PROG_LOCK = 0x63;  //'c'
+    this.STK_PROG_PAGE = 0x64;  //'d'
+    this.STK_PROG_FUSE_EXT = 0x65;  //'e'
+    this.STK_READ_FLASH = 0x70;  //'p'
+    this.STK_READ_DATA = 0x71;  //'q'
+    this.STK_READ_FUSE = 0x72;  //'r'
+    this.STK_READ_LOCK = 0x73;  //'s'
+    this.STK_READ_PAGE = 0x74;  //'t'
+    this.STK_READ_SIGN = 0x75;  //'u'
+    this.STK_READ_OSCCAL = 0x76;  //'v'
+    this.STK_READ_FUSE_EXT = 0x77;  //'w'
+    this.STK_READ_OSCCAL_EXT = 0x78;  //'x'
+
+    this.CAT_SETADDR = 0x41;  //'A'
+    this.CAT_WRITE = 0x42;  //'B'
+    this.CAT_QUIT = 0x45;  //'E'
+
+    this.QUERY_HW_VER = 0x80;
+    this.QUERY_SW_MAJOR = 0x81;
+    this.QUERY_SW_MINOR = 0x82;
+
+    this.DOWNLOAD_SENDADDR = 0xE0;
+    this.DOWNLOAD_SENDCODE = 0xE1;
+
     this.sock = null;
     this.ping = null;
     this.stkMode = null;
@@ -83,7 +84,7 @@ var NetworkConnection = function(){
     });
     client.on('message',function(msg,rinfo){
         this.robotlist[msg] = rinfo.address;
-    });
+    }.bind(this));
 };
 
 function parseHexLine(hexline){
@@ -280,7 +281,7 @@ NetworkConnection.prototype.disconnect = function(){
 };
 
 
-module.exports = SerialConnection;
+module.exports = NetworkConnection;
 
 
 
