@@ -264,7 +264,7 @@ NetworkConnection.prototype.promoteIpDialog = function(callback,robotip,readline
         var tmp = ip_port.split(":");
         this.remoteIp = tmp[0];
         this.remotePort = parseInt(tmp[1]);
-        this.r
+        this.disonnCallback = closeCb;
         this.initSocket(function () {
             if(callback){
                 callback(ip_port);
