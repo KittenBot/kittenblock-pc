@@ -90,6 +90,8 @@ KittenBlock.prototype.sendCmd = function (data) {
         }else{
             this.serial.send(data+'\r\n');
         }
+    }else if(this.connectedPort && this.connectedPort.type=='net'){
+        this.net.sendCmd(data);
     }
 };
 
@@ -99,7 +101,7 @@ KittenBlock.prototype.enumPort = function (callback) {
     for(var key in this.net.robotlist){
         var ip = this.net.robotlist[key];
         key = key+":"+ip;
-        var port = {"path":key,"type":'net',ip:ip};
+        var port = {"path":key,"type":'net','ip':ip};
         this.portList.push(port);
     }
     this.serial.enumSerial(function (devices) {

@@ -100,9 +100,10 @@ function parseHexLine(hexline){
     return {len:len,addr:addr,typ:typ,data:bytes,chk:chk};
 }
 
-NetworkConnection.prototype.initSocket = function(callback){
+NetworkConnection.prototype.initSocket = function(callback,readlineCb){
     this.stkMode = null;
     this.sock = dgram.createSocket({ type: 'udp4', reuseAddr: true });
+    this.readLineCallback = readlineCb;
     this.sock.on('message',function(msg,rinfo){
         if(this.stkMode){
             this.parseStkCmd(msg);
@@ -110,20 +111,21 @@ NetworkConnection.prototype.initSocket = function(callback){
             var lines = msg.toString().match(/[^\r\n]+/g);
             for(var i=0;i<lines.length;i++){
                 this.onReadLine.dispatch(lines[i]);
+                if(this.readLineCallback) this.readLineCallback(lines[i]);
             }
         }
-    });
+    }.bind(this));
     this.sock.on('error', function(err){
         console.log("esp sock error "+ err.stack);
         this.onError.dispatch(err.stack);
 //        this.sock.close();
-    });
+    }.bind(this));
     this.sock.on("listening", function(){
         if(callback){
             callback();
         }
-    });
-    this.sock.bind(45565);
+    }.bind(this));
+    this.sock.bind();
 };
 
 
@@ -269,7 +271,7 @@ NetworkConnection.prototype.promoteIpDialog = function(callback,robotip,readline
             if(callback){
                 callback(ip_port);
             }
-        });
+        },readlineCb);
     }
 
 };
